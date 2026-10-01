@@ -1,5 +1,7 @@
 # NAND Prefetch and AXI Outstanding Model
 
+[경계값과 첫 AR → RLAST 쉬운 설명](docs/execution_model/BOUNDARY_AND_AR_RLAST_KO.md) — 0.384µs 경계, 첫 응답 512ns, 평균 약 513.5ns의 계산과 타임라인.
+
 ## GUI 바로 실행
 
 [GUI 상세 안내](docs/execution_model/README.md) · [실행 HTML](docs/execution_model/index.html) · [21,504개 결과 데이터](docs/execution_model/data.json)

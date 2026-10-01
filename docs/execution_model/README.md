@@ -1,5 +1,7 @@
 # NAND–AXI 실행 모델 다이어그램
 
+[경계값과 첫 AR → RLAST 쉬운 설명](BOUNDARY_AND_AR_RLAST_KO.md) — 0.384µs 경계, 첫 응답 512ns, 평균 약 513.5ns의 계산과 타임라인.
+
 `index.html`을 브라우저에서 열면 실행 흐름, 칩·page 배치, burst 타이밍, 전체 파라미터를 확인할 수 있습니다. 파일에 결과와 화면 동작을 포함했습니다.
 
 ## GUI 열기
