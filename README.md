@@ -110,3 +110,7 @@ Eight tests cover analytic shared/independent transfer, serial sensing,
 in-order return at QD4, finite-buffer credit limits, delayed address availability,
 wrong-speculation traffic, lookup delay and prefetched readiness.
 Tests validate the model equations and invariants, not real NAND behavior.
+
+## 실행 모델 다이어그램
+
+[인터랙티브 다이어그램 안내](docs/execution_model/README.md) — 전체 실행 흐름, 물리 배치, burst 타임라인, 파라미터와 392개 실행 결과. `docs/execution_model/index.html`을 브라우저에서 여세요.
