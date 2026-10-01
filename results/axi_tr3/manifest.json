@@ -1,0 +1,32 @@
+{
+  "config": {
+    "requests": 32,
+    "request_bytes": 65536,
+    "page_bytes": 16384,
+    "burst_bytes": 4096,
+    "chips": 4,
+    "channels": 4,
+    "planes": 6,
+    "mapping": "striped",
+    "tr_us": 3.0,
+    "lookup_us": 0.0,
+    "outstanding": 1,
+    "scenario": "none",
+    "period_us": 0.0,
+    "first_demand_us": 20000.0,
+    "early_lead_us": 10000.0,
+    "late_lead_us": 1.5,
+    "buffer_bytes": 8388608,
+    "io_gbps": 2.4,
+    "command_us": 0.1,
+    "turnaround_us": 0.05,
+    "ecc_us": 0.2,
+    "axi_width_bits": 256,
+    "axi_clock_mhz": 500.0
+  },
+  "cases": 784,
+  "requests_per_case": 32,
+  "python": "3.14.7",
+  "runtime_seconds": 17.866692066192627,
+  "source_sha256": "57654d316d15595ba27d28e77cc0d147c0020a8de4fd89d034a90a2bcd8eb964"
+}

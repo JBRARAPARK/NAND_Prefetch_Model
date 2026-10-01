@@ -1,0 +1,13 @@
+ChatGPT 대화: zNAND O 설명
+원본 대화 ID: 6abe59f9-ba28-83ee-b6a4-693e82c41a13
+작업 계획: https://chatgpt.com/space/page_2e9fdc73e5088191a37d4bbbec72993a
+
+2026-10-01: 연결된 클라우드 작업의 파일 생성·수정 기록에서 소스를 복원.
+기록에 있던 AXI max beats 128 수정과 두 차례 sim.py 패치를 모두 적용.
+config_tlc.json과 CSV는 복원된 소스로 다시 생성.
+로컬 검증 8개 통과, 기본 sweep 160개 조건 완료.
+
+실행: sh run.sh
+가상환경 재구축: python3 -m venv .venv && .venv/bin/python -m pip install -r requirements.txt
+현재 수치는 특정 제품의 실측이 아닌 TLC 가정 기반 모델 결과.
+후속 세부 개선 항목은 README.md의 Next fidelity extensions 참고.
