@@ -2,6 +2,16 @@
 
 `index.html`을 브라우저에서 열면 실행 흐름, 칩·page 배치, burst 타이밍, 전체 파라미터를 확인할 수 있습니다. 파일에 결과와 화면 동작을 포함했습니다.
 
+## GUI 열기
+
+- macOS: 저장소 루트에서 `open docs/execution_model/index.html`
+- Windows: `index.html`을 더블클릭하거나 브라우저로 열기
+- GitHub: HTML 파일 페이지에서 **Download raw file**로 내려받은 뒤 브라우저로 열기. GitHub 코드 화면에서는 GUI가 실행되지 않습니다.
+
+네 탭은 실행 흐름, 칩과 page 배치, burst 시간 관계, 전체 파라미터입니다. 실행 흐름의 블록을 선택하면 세부 동작을 볼 수 있습니다. 상단의 네 선택 항목을 바꾸면 내장된 실행 결과와 타이밍이 바뀝니다.
+
+GUI는 392개 조합의 결과를 탐색하는 화면입니다. 선택할 때 Python을 실행하지 않으며, 임의의 파라미터를 입력해 새 결과를 계산하는 기능은 포함하지 않습니다.
+
 ## 실행 조건
 
 - 32 × 64KiB 동시 요청, tR 3µs, 16KiB page, 4KiB AXI burst

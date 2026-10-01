@@ -1,5 +1,34 @@
 # NAND Prefetch and AXI Outstanding Model
 
+## GUI 바로 실행
+
+[GUI 상세 안내](docs/execution_model/README.md) · [실행 HTML](docs/execution_model/index.html) · [392개 결과 데이터](docs/execution_model/data.json)
+
+저장소를 받은 뒤 **`docs/execution_model/index.html`을 Chrome, Safari 또는 Edge로 열면** 대화 옆 패널과 같은 인터랙티브 GUI가 표시됩니다. Python 설치나 시뮬레이터 실행 없이 내장된 결과를 확인할 수 있습니다.
+
+macOS에서는 저장소 루트에서:
+
+```sh
+open docs/execution_model/index.html
+```
+
+Windows에서는 해당 파일을 더블클릭하거나 ‘연결 프로그램’에서 브라우저를 선택합니다.
+
+GitHub의 HTML 파일 페이지는 코드를 보여줍니다. 위 링크만 클릭해서는 GUI가 실행되지 않습니다. 파일 페이지의 **Download raw file**로 HTML을 저장한 뒤 브라우저에서 여세요. 저장소 전체를 `Code → Download ZIP`으로 받아 압축을 풀어도 됩니다.
+
+### GUI에서 확인할 내용
+
+| 화면 | 확인 내용 |
+| --- | --- |
+| 실행 흐름 | 요청 → AR → hit 조회 → 순서 대기 → AXI R 반환, prefetch/NAND 경로; 블록 선택 시 상세 동작 |
+| 칩과 page 배치 | 64KiB 요청의 4개 page와 chip·plane·channel 연결 |
+| Burst 시간 관계 | 조회, page 준비 대기, 선행 반환 대기, R 전송의 실제 실행 타이밍 |
+| 전체 파라미터 | 크기, 자원 수, NAND·AXI 타이밍과 고정 가정 |
+
+상단에서 prefetch 조건, 칩·채널 배치, hit 조회 지연, outstanding을 선택합니다. 화면은 **미리 실행한 392개 조합 중 선택한 결과**를 표시하며, 브라우저에서 Python 모델을 새로 실행하지 않습니다.
+
+기본 선택은 tR 3µs, ready hit 100%, outstanding 4, 조회 지연 0.768µs입니다. 이 조회 지연은 초기 대기 이후 R 전송을 끊김 없이 이어갈 수 있는 경계입니다.
+
 ## 최신 실험 tR 3µs
 
 [한글 결과 분석](results/axi_tr3/RESULTS_KO.md) · [전체 CSV](results/axi_tr3/sweep.csv)
@@ -110,7 +139,3 @@ Eight tests cover analytic shared/independent transfer, serial sensing,
 in-order return at QD4, finite-buffer credit limits, delayed address availability,
 wrong-speculation traffic, lookup delay and prefetched readiness.
 Tests validate the model equations and invariants, not real NAND behavior.
-
-## 실행 모델 다이어그램
-
-[인터랙티브 다이어그램 안내](docs/execution_model/README.md) — 전체 실행 흐름, 물리 배치, burst 타임라인, 파라미터와 392개 실행 결과. `docs/execution_model/index.html`을 브라우저에서 여세요.
