@@ -1,5 +1,7 @@
 # NAND Prefetch and AXI Outstanding Model
 
+[낮은 Outstanding에서 조회 지연의 성능 영향 한 장 자료](docs/execution_model/LOW_OUTSTANDING_LOOKUP_IMPACT_KO.docx) — hit 100%, 조회 0.5µs에서 O=1 처리량 79.6% 감소, O=2 59.3% 감소.
+
 [경계값과 첫 AR → RLAST 쉬운 설명](docs/execution_model/BOUNDARY_AND_AR_RLAST_KO.md) — 0.384µs 경계, 첫 응답 512ns, 평균 약 513.5ns의 계산과 타임라인.
 
 ## GUI 바로 실행
