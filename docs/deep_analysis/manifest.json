@@ -1,0 +1,11 @@
+{
+  "cases": 72,
+  "source_sha256": "57654d316d15595ba27d28e77cc0d147c0020a8de4fd89d034a90a2bcd8eb964",
+  "groups": {
+    "buffer": 16,
+    "topology_tr": 24,
+    "threshold_length": 12,
+    "lookup_capacity": 20
+  },
+  "note": "LookupLimited only serializes lookup completion slots; no production source modifications."
+}
