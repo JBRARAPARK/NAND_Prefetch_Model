@@ -15,9 +15,9 @@ GUI는 21,504개 조합의 결과를 탐색하는 화면입니다. 선택할 때
 ## 실행 조건
 
 - 32 × 64KiB 동시 요청, tR 3µs, 16KiB page, 4KiB AXI burst
-- 256bit / 500MHz AXI, 병렬 hit 조회, 전역 in-order 반환
-- Prefetch 4종 × 배치 2종 × outstanding 64종(1–64, 1단위) × 조회 지연 42종(0–10µs, 0.25µs 간격 + 0.768µs) = 21,504개 실행 결과
-- 초기 선택: ready, 4칩·4채널, outstanding 4, 조회 지연 0.768µs
+- 256bit / 1GHz AXI, 병렬 hit 조회, 전역 in-order 반환
+- Prefetch 4종 × 배치 2종 × outstanding 64종(1–64, 1단위) × 조회 지연 42종(0–10µs, 0.25µs 간격 + 0.384µs) = 21,504개 실행 결과
+- 초기 선택: ready, 4칩·4채널, outstanding 4, 조회 지연 0.384µs
 - 타임라인은 요청 0의 burst 0–7과 요청 1의 burst 16–17을 표시합니다.
 
 ## 데이터 재생성
@@ -29,6 +29,8 @@ python3 docs/execution_model/generate_data.py
 python3 docs/execution_model/update_html.py
 ```
 
-`generate_data.py`는 4개 프로세스로 모델을 실행해 `data.json`을 생성합니다. `update_html.py`는 결과와 조회 지연 선택값을 HTML에 반영합니다. 두 명령을 실행한 뒤 브라우저를 새로고침하세요. 모델과 설정이 바뀌지 않은 상태에서 조건만 추가할 때는 `generate_data.py --reuse-existing`으로 기존 결과를 재사용할 수 있습니다.
+`generate_data.py`는 4개 프로세스로 모델을 실행해 `data.json`을 생성합니다. `update_html.py`는 결과와 조회 지연 선택값을 HTML에 반영합니다. 두 명령을 실행한 뒤 브라우저를 새로고침하세요. 클럭 등 실행 설정이 바뀌었을 때 이전 결과가 섞이지 않도록 매번 전체 조건을 새로 계산합니다.
 
-Ready 조건의 0.768µs 경계는 초기 대기 이후 연속 R 전송이 가능한 한계입니다. 유한한 전체 요청의 처리량에는 초기 조회 대기가 포함됩니다. NAND tR 3µs는 내부 sensing 시간이며 NAND 데이터 전송·ECC·AXI 반환 시간은 별도입니다.
+Ready 조건의 0.384µs 경계는 초기 대기 이후 연속 R 전송이 가능한 한계입니다. 유한한 전체 요청의 처리량에는 초기 조회 대기가 포함됩니다. NAND tR 3µs는 내부 sensing 시간이며 NAND 데이터 전송·ECC·AXI 반환 시간은 별도입니다.
+
+GUI는 AXI 클럭을 명시적으로 **1GHz**로 설정합니다. 256bit 폭에서 이론 상한은 **32GB/s**, 4KiB burst는 **128ns**, 64KiB R 전송 점유는 **2.048µs**입니다. NAND는 기존 4칩·4채널(또는 한 칩 집중·1채널), 채널당 2.4GB/s를 유지합니다. Ready hit 처리량과 NAND에서 지속적으로 공급하는 처리량은 다릅니다. 기존 보고서·CSV와 `Config` 기본값은 500MHz 기준이며 GUI와 구분해서 비교하세요.

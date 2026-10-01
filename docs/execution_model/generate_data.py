@@ -8,12 +8,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from axi_burst_sim import Config, Simulator
 
-LOOKUPS = sorted({i / 4 for i in range(41)} | {0.768})
+LOOKUPS = sorted({i / 4 for i in range(41)} | {0.384})
 
 def simulate(case):
     scenario, mapping, channels, outstanding, lookup = case
     c = Config(requests=32, scenario=scenario, mapping=mapping,
-               channels=channels, outstanding=outstanding, lookup_us=lookup)
+               channels=channels, outstanding=outstanding, lookup_us=lookup, axi_clock_mhz=1000.0)
     s = Simulator(c)
     m, _ = s.run()
     t0 = c.first_demand_us
@@ -37,14 +37,12 @@ def key(case):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--workers', type=int, default=4)
-    parser.add_argument('--reuse-existing', action='store_true',
-                        help='Reuse data.json only when model/configuration are unchanged')
     args = parser.parse_args()
     path = Path(__file__).with_name('data.json')
     cases = [(s, m, ch, o, l) for s in ['ready', 'none', 'late', 'mixed']
              for m, ch in [('striped', 4), ('single', 1)]
              for o in range(1, 65) for l in LOOKUPS]
-    existing = json.loads(path.read_text()) if args.reuse_existing and path.exists() else {}
+    existing = {}  # Always recompute: avoid reusing results from another clock profile.
     out = {key(c): existing[key(c)] for c in cases if key(c) in existing}
     pending = [c for c in cases if key(c) not in out]
     print(f'{len(out)} reused; {len(pending)} simulations to run', flush=True)

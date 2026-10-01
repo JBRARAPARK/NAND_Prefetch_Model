@@ -15,8 +15,8 @@ source = path.read_text()
 match = re.search(r'data-srcdoc="([\s\S]*?)"', source)
 assert match, 'Missing standalone frame'
 inner = html.unescape(match.group(1))
-options = ''.join(f'<option value="{v:g}"'+(' selected' if v == .768 else '')+
-                  f'>{v:g}µs'+(' (경계값)' if v == .768 else '')+'</option>' for v in LOOKUPS)
+options = ''.join(f'<option value="{v:g}"'+(' selected' if v == .384 else '')+
+                  f'>{v:g}µs'+(' (경계값)' if v == .384 else '')+'</option>' for v in LOOKUPS)
 inner, count = re.subn(r'(<select[^>]*id="nm-lookup"[^>]*>).*?(</select>)',
                       lambda m: m[1]+options+m[2], inner, flags=re.S)
 assert count == 1
