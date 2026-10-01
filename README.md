@@ -2,7 +2,7 @@
 
 ## GUI 바로 실행
 
-[GUI 상세 안내](docs/execution_model/README.md) · [실행 HTML](docs/execution_model/index.html) · [3,584개 결과 데이터](docs/execution_model/data.json)
+[GUI 상세 안내](docs/execution_model/README.md) · [실행 HTML](docs/execution_model/index.html) · [21,504개 결과 데이터](docs/execution_model/data.json)
 
 저장소를 받은 뒤 **`docs/execution_model/index.html`을 Chrome, Safari 또는 Edge로 열면** 대화 옆 패널과 같은 인터랙티브 GUI가 표시됩니다. Python 설치나 시뮬레이터 실행 없이 내장된 결과를 확인할 수 있습니다.
 
@@ -25,7 +25,7 @@ GitHub의 HTML 파일 페이지는 코드를 보여줍니다. 위 링크만 클�
 | Burst 시간 관계 | 조회, page 준비 대기, 선행 반환 대기, R 전송의 실제 실행 타이밍 |
 | 전체 파라미터 | 크기, 자원 수, NAND·AXI 타이밍과 고정 가정 |
 
-상단에서 prefetch 조건, 칩·채널 배치, hit 조회 지연, outstanding을 선택합니다. 화면은 **미리 실행한 3,584개 조합 중 선택한 결과**를 표시하며, 브라우저에서 Python 모델을 새로 실행하지 않습니다.
+상단에서 prefetch 조건, 칩·채널 배치, hit 조회 지연, outstanding을 선택합니다. 조회 지연은 0–10µs에서 0.25µs 단위이며, 0.768µs 경계값도 별도로 제공합니다. Outstanding은 1–64에서 1단위입니다. 화면은 **미리 실행한 21,504개 조합 중 선택한 결과**를 표시하며, 브라우저에서 Python 모델을 새로 실행하지 않습니다.
 
 기본 선택은 tR 3µs, ready hit 100%, outstanding 4, 조회 지연 0.768µs입니다. 이 조회 지연은 초기 대기 이후 R 전송을 끊김 없이 이어갈 수 있는 경계입니다.
 

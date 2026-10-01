@@ -10,13 +10,13 @@
 
 네 탭은 실행 흐름, 칩과 page 배치, burst 시간 관계, 전체 파라미터입니다. 실행 흐름의 블록을 선택하면 세부 동작을 볼 수 있습니다. 상단의 네 선택 항목을 바꾸면 내장된 실행 결과와 타이밍이 바뀝니다.
 
-GUI는 3,584개 조합의 결과를 탐색하는 화면입니다. 선택할 때 Python을 실행하지 않으며, 임의의 파라미터를 입력해 새 결과를 계산하는 기능은 포함하지 않습니다.
+GUI는 21,504개 조합의 결과를 탐색하는 화면입니다. 선택할 때 Python을 실행하지 않으며, 임의의 파라미터를 입력해 새 결과를 계산하는 기능은 포함하지 않습니다.
 
 ## 실행 조건
 
 - 32 × 64KiB 동시 요청, tR 3µs, 16KiB page, 4KiB AXI burst
 - 256bit / 500MHz AXI, 병렬 hit 조회, 전역 in-order 반환
-- Prefetch 4종 × 배치 2종 × outstanding 64종(1–64, 1단위) × 조회 지연 7종 = 3,584개 실행 결과
+- Prefetch 4종 × 배치 2종 × outstanding 64종(1–64, 1단위) × 조회 지연 42종(0–10µs, 0.25µs 간격 + 0.768µs) = 21,504개 실행 결과
 - 초기 선택: ready, 4칩·4채널, outstanding 4, 조회 지연 0.768µs
 - 타임라인은 요청 0의 burst 0–7과 요청 1의 burst 16–17을 표시합니다.
 
@@ -26,8 +26,9 @@ GUI는 3,584개 조합의 결과를 탐색하는 화면입니다. 선택할 때 
 
 ```sh
 python3 docs/execution_model/generate_data.py
+python3 docs/execution_model/update_html.py
 ```
 
-`data.json`은 모델을 다시 실행한 결과입니다. HTML은 작성 시점의 결과를 내장한 스냅샷이므로 JSON 재생성만으로 화면이 갱신되지는 않습니다.
+`generate_data.py`는 4개 프로세스로 모델을 실행해 `data.json`을 생성합니다. `update_html.py`는 결과와 조회 지연 선택값을 HTML에 반영합니다. 두 명령을 실행한 뒤 브라우저를 새로고침하세요. 모델과 설정이 바뀌지 않은 상태에서 조건만 추가할 때는 `generate_data.py --reuse-existing`으로 기존 결과를 재사용할 수 있습니다.
 
 Ready 조건의 0.768µs 경계는 초기 대기 이후 연속 R 전송이 가능한 한계입니다. 유한한 전체 요청의 처리량에는 초기 조회 대기가 포함됩니다. NAND tR 3µs는 내부 sensing 시간이며 NAND 데이터 전송·ECC·AXI 반환 시간은 별도입니다.
