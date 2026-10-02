@@ -20,6 +20,9 @@ class Config:
     mapping: str = 'striped'
     tr_us: float = 3.0
     lookup_us: float = 0.0
+    # None preserves the original unlimited concurrent lookup model.
+    # One slot is occupied from lookup start through completion (not RLAST).
+    lookup_slots: int | None = None
     outstanding: int = 1
     scenario: str = 'none'
     period_us: float = 0.0
@@ -42,11 +45,15 @@ class Simulator:
         if c.request_bytes%c.page_bytes or c.page_bytes%c.burst_bytes: raise ValueError('alignment')
         if c.burst_bytes>4096 or c.burst_bytes*8%c.axi_width_bits: raise ValueError('burst')
         if c.buffer_bytes<c.page_bytes or min(c.lookup_us,c.tr_us,c.period_us)<0: raise ValueError('timing/capacity')
+        if c.lookup_slots is not None and (type(c.lookup_slots) is not int or c.lookup_slots<=0):
+            raise ValueError('lookup_slots must be a positive integer or None')
         self.c=c;self.now=0.;self.seq=0;self.events=[];self.trace=[]
         self.pp=c.request_bytes//c.page_bytes;self.bp=c.page_bytes//c.burst_bytes
         self.br=c.request_bytes//c.burst_bytes;self.total=c.requests*self.br
         self.pages={};self.pending_pages={};self.bursts={};self.ar_queue=deque();self.next_r=0
         self.active=0;self.peak=0;self.ar_scheduled=False;self.r_busy=False
+        self.lookup_queue=deque();self.lookup_active=0;self.lookup_peak=0;self.lookup_queue_peak=0
+        self.ready_bursts=set()
         self.plane_busy=set();self.cmd_busy=set();self.io_busy=set()
         self.used=0;self.buffer_peak=0;self.nand_bytes=0
         self.hol_idle=0.;self.idle=0.;self.last=0.
@@ -73,6 +80,16 @@ class Simulator:
         if self.ar_queue and self.active<self.c.outstanding and not self.ar_scheduled:
             self.ar_scheduled=True
             self.event(max(self.now,getattr(self,'next_ar_time',0.)),'ar',None)
+    def start_lookups(self):
+        """FIFO service; queued ARs still occupy AXI outstanding credits."""
+        limit=self.c.lookup_slots
+        while self.lookup_queue and (limit is None or self.lookup_active<limit):
+            bid=self.lookup_queue.popleft()
+            self.bursts[bid]['lookup_start']=self.now
+            self.lookup_active+=1;self.lookup_peak=max(self.lookup_peak,self.lookup_active)
+            self.log('lookup_start',burst=bid,lookup_active=self.lookup_active)
+            self.event(self.now+self.c.lookup_us,'lookup',bid)
+        self.lookup_queue_peak=max(self.lookup_queue_peak,len(self.lookup_queue))
     def dispatch(self):
         c=self.c
         for p in sorted(self.pending_pages.values(),key=lambda x:x['pid']):
@@ -109,7 +126,7 @@ class Simulator:
             t,_,kind,data=heapq.heappop(self.events)
             if self.next_r<self.total and self.bursts and not self.r_busy:
                 self.idle+=t-self.now
-                if not self.eligible(self.next_r) and any(self.eligible(b) for b in range(self.next_r+1,self.next_r+self.active)):self.hol_idle+=t-self.now
+                if not self.eligible(self.next_r) and self.ready_bursts:self.hol_idle+=t-self.now
             self.now=t
             if kind=='demand':
                 self.ar_queue.extend(range(data*self.br,(data+1)*self.br))
@@ -122,10 +139,15 @@ class Simulator:
                     self.bursts[bid]=dict(ar=self.now,lookup_done=False,hit_at_ar=self.snapshot(bid//self.bp))
                     self.log('ar',burst=bid,outstanding=self.active)
                     self.next_ar_time=self.now+1/c.axi_clock_mhz
-                    self.event(self.now+c.lookup_us,'lookup',bid)
+                    self.lookup_queue.append(bid)
+                    self.start_lookups()
             elif kind=='lookup':
                 b=self.bursts[data];b['lookup_done']=True;b['hit_at_lookup']=self.snapshot(data//self.bp)
+                b['lookup_complete_us']=self.now;self.lookup_active-=1
+                self.log('lookup_done',burst=data,lookup_active=self.lookup_active)
                 self.page(data//self.bp)
+                if self.eligible(data):self.ready_bursts.add(data)
+                self.start_lookups()
             elif kind=='sense':
                 p=self.pages[data];self.cmd_busy.remove(p['chip']);p['state']='sense'
                 self.event(self.now+c.tr_us,'sensed',data)
@@ -136,15 +158,20 @@ class Simulator:
             elif kind=='ready':
                 p=self.pages[data];p['state']='ready';p['ready']=self.now;self.log('page_ready',page=data)
                 del self.pending_pages[data]
+                lo=max(self.next_r,data*self.bp)
+                hi=min(self.next_r+self.active,(data+1)*self.bp)
+                self.ready_bursts.update(b for b in range(lo,hi) if self.eligible(b))
             elif kind=='rlast':
                 assert data==self.next_r
                 b=self.bursts[data];b['rlast']=self.now;self.active-=1;self.next_r+=1;self.r_busy=False
+                self.ready_bursts.discard(data)
                 p=self.pages[data//self.bp];p['returned']+=1
                 if p['returned']==self.bp:self.used-=c.page_bytes;p['state']='returned'
                 self.log('rlast',burst=data,outstanding=self.active)
             self.schedule_ar();self.dispatch();self.start_r()
         assert self.next_r==self.total, f'deadlock {self.next_r}/{self.total}'
         assert self.active==0 and self.used==0
+        assert self.lookup_active==0 and not self.lookup_queue and not self.ready_bursts
         req=[]
         for i in range(c.requests):
             bs=[self.bursts[j] for j in range(i*self.br,(i+1)*self.br)]
@@ -163,5 +190,9 @@ class Simulator:
                ready_hit_at_ar=sum(b['hit_at_ar']=='ready' for b in self.bursts.values())/self.total,
                ready_hit_at_lookup=sum(b['hit_at_lookup']=='ready' for b in self.bursts.values())/self.total,
                late_hit_at_ar=sum(b['hit_at_ar']=='late' for b in self.bursts.values())/self.total,
-               r_idle_us=self.idle,hol_idle_us=self.hol_idle,nand_bytes=self.nand_bytes)
+               r_idle_us=self.idle,hol_idle_us=self.hol_idle,nand_bytes=self.nand_bytes,
+               peak_lookup_active=self.lookup_peak,peak_lookup_queue=self.lookup_queue_peak,
+               mean_lookup_wait_us=sum(b['lookup_start']-b['ar'] for b in self.bursts.values())/self.total,
+               max_lookup_wait_us=max(b['lookup_start']-b['ar'] for b in self.bursts.values()),
+               mean_ar_to_lookup_done_us=sum(b['lookup_complete_us']-b['ar'] for b in self.bursts.values())/self.total)
         return m,req

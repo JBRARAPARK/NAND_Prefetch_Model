@@ -1,5 +1,21 @@
 # NAND Prefetch and AXI Outstanding Model
 
+## 유한 조회 슬롯: 병렬 hit/miss 조회 제한
+
+[슬롯 제한 결과](results/lookup_slots_64b/RESULTS_KO.md) · [전체 CSV](results/lookup_slots_64b/sweep.csv) · [처리량·조회 대기 그래프](results/lookup_slots_64b/ready_heatmap.png)
+
+`Config.lookup_slots`에 양의 정수를 지정하면 동시 조회 수를 제한한다. 기본 `None`은 기존 무제한 모델이다. 슬롯은 조회 시작부터 완료까지 점유하며, 대기 요청은 FIFO에서 AXI outstanding을 계속 차지한다. 슬롯 1/4/16/64/100/128/200/249/250/251/500/무제한과 outstanding 100–500을 비교한다.
+
+64B·조회 500ns에서 슬롯 C개의 처리량 상한은 `0.128 × C GB/s`다. 256bit·1GHz AXI의 32GB/s를 유지하려면 ready hit에서 조회 슬롯 250개 이상과 outstanding 251개 이상이 함께 필요하다. 조회 슬롯은 물리 포트 수가 아닌 in-flight 조회 capacity이며, 독립적인 pipeline initiation interval은 아직 모델링하지 않는다.
+
+```sh
+python3 -m unittest -q
+python3 experiments/run_lookup_slots.py
+python3 experiments/summarize_lookup_slots.py
+```
+
+260개 조건, 26개 테스트. 평균·최대 조회 대기, 실제 조회 동시성, 큐 길이, AR→RLAST 응답 지연을 추가 계측한다. 기존 GUI의 내장 결과와는 별도다.
+
 ## 추가 실험: 64B AXI burst · tR 2.08µs · outstanding 100–500
 
 [결과 분석](results/axi_64b_tr2p08/RESULTS_KO.md) · [전체 CSV](results/axi_64b_tr2p08/sweep.csv) · [처리량 그래프](results/axi_64b_tr2p08/throughput.png)

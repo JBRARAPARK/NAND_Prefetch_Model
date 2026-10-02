@@ -1,0 +1,67 @@
+{
+  "base_config": {
+    "requests": 32,
+    "request_bytes": 65536,
+    "page_bytes": 16384,
+    "burst_bytes": 64,
+    "chips": 4,
+    "channels": 4,
+    "planes": 6,
+    "mapping": "striped",
+    "tr_us": 2.08,
+    "lookup_us": 0.5,
+    "lookup_slots": null,
+    "outstanding": 1,
+    "scenario": "none",
+    "period_us": 0.0,
+    "first_demand_us": 20000.0,
+    "early_lead_us": 10000.0,
+    "late_lead_us": 1.5,
+    "buffer_bytes": 8388608,
+    "io_gbps": 2.4,
+    "command_us": 0.1,
+    "turnaround_us": 0.05,
+    "ecc_us": 0.2,
+    "axi_width_bits": 256,
+    "axi_clock_mhz": 1000
+  },
+  "lookup_slots": [
+    1,
+    4,
+    16,
+    64,
+    100,
+    128,
+    200,
+    249,
+    250,
+    251,
+    500,
+    null
+  ],
+  "outstanding": [
+    100,
+    200,
+    300,
+    400,
+    500
+  ],
+  "scenarios": [
+    "ready",
+    "none",
+    "late",
+    "mixed"
+  ],
+  "lookup_us": 0.5,
+  "additional_baseline": "unlimited lookup slots, lookup_us=0",
+  "cases": 260,
+  "runtime_seconds": 189.13038075200006,
+  "python": "3.12.14",
+  "base_commit": "f298af47312410562c1049bf2fddee89c67fa111",
+  "source_sha256": {
+    "axi_burst_sim.py": "283c902395acd066e3b46437338928a01d14da00065a07f11eda1d56d5cb9dac",
+    "test_lookup_slots.py": "f842df05062782a077c67df5c449d625fa46be0b5d1f0c69f9cee73c6768b028",
+    "experiments/run_lookup_slots.py": "90aef9d0dbea40e1fdacf064246d4724745f8d7f633611b062ee14ceaa3fdc5d"
+  },
+  "semantics": "A slot is held for the full lookup service latency, released before NAND/AXI completion. FIFO waiting remains inside AR-to-RLAST outstanding. No separate lookup initiation-interval or bank-conflict model."
+}
