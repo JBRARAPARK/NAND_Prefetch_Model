@@ -1,5 +1,7 @@
 # NAND Prefetch and AXI Outstanding Model
 
+[임원용 핵심 보고서 PDF](docs/executive_brief/NAND_Prefetch_Executive_Brief_KO.pdf) · [편집용 Word](docs/executive_brief/NAND_Prefetch_Executive_Brief_KO.docx)
+
 ## 유한 조회 슬롯: 병렬 hit/miss 조회 제한
 
 [슬롯 제한 결과](results/lookup_slots_64b/RESULTS_KO.md) · [전체 CSV](results/lookup_slots_64b/sweep.csv) · [처리량·조회 대기 그래프](results/lookup_slots_64b/ready_heatmap.png)
