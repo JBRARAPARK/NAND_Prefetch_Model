@@ -1,0 +1,50 @@
+{
+  "base_config": {
+    "requests": 32,
+    "request_bytes": 65536,
+    "page_bytes": 16384,
+    "burst_bytes": 64,
+    "chips": 4,
+    "channels": 4,
+    "planes": 6,
+    "mapping": "striped",
+    "tr_us": 2.08,
+    "lookup_us": 0.0,
+    "outstanding": 100,
+    "scenario": "none",
+    "period_us": 0.0,
+    "first_demand_us": 20000.0,
+    "early_lead_us": 10000.0,
+    "late_lead_us": 1.5,
+    "buffer_bytes": 8388608,
+    "io_gbps": 2.4,
+    "command_us": 0.1,
+    "turnaround_us": 0.05,
+    "ecc_us": 0.2,
+    "axi_width_bits": 256,
+    "axi_clock_mhz": 1000
+  },
+  "outstanding": [
+    100,
+    200,
+    250,
+    251,
+    300,
+    400,
+    500
+  ],
+  "lookup_us": [
+    0,
+    0.5
+  ],
+  "cases": 112,
+  "python": "3.12.14",
+  "elapsed_seconds": 109.73126754700002,
+  "base_commit": "eb5029d0d45aaa3b87e23f2714ff29132144122c",
+  "source_sha256": {
+    "axi_burst_sim.py": "10db7744e166d10240cdf1871d316a16dc4610c964c2ed89bc356dab4a83dfac",
+    "experiments/run_64b_sweep.py": "10e1a6ccecc2048692c6d496873fea6bf83a21c4616156fb16c203079666b396",
+    "test_axi_64b.py": "3dba6216b6723f5ecc32554a7a5c1b10c694cb87462544130c48e03463f6c162"
+  },
+  "interpretation": "64B AXI burst within sequential 64KiB logical requests; 16KiB NAND pages unchanged; 500ns parallel per-burst hit/miss lookup after AR; 1GHz GUI clock profile"
+}

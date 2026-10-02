@@ -1,5 +1,19 @@
 # NAND Prefetch and AXI Outstanding Model
 
+## 추가 실험: 64B AXI burst · tR 2.08µs · outstanding 100–500
+
+[결과 분석](results/axi_64b_tr2p08/RESULTS_KO.md) · [전체 CSV](results/axi_64b_tr2p08/sweep.csv) · [처리량 그래프](results/axi_64b_tr2p08/throughput.png)
+
+기존 `axi_burst_sim.py`에서 112개 조건을 실행했다. 기존 GUI와 같은 256bit·1GHz AXI에서 burst별 병렬 hit/miss 조회 0ns와 500ns를 비교한다. 64B는 AXI 읽기 단위이며, 64KiB logical request와 16KiB NAND page는 유지한다. Ready hit에서 500ns 조회를 숨기는 경계는 outstanding 251개다. 100개에서는 전체 처리량이 60.23%, 200개에서는 20.72% 감소했다. 상세 가정과 miss 경로 결과는 분석 문서를 참고한다. 기존 GUI 내장 데이터는 이 실험과 별개다.
+
+```sh
+python3 -m unittest -q
+python3 experiments/run_64b_sweep.py
+python3 experiments/summarize_64b.py
+```
+
+20개 검증 통과. 기존 4KiB 조건 16개에서 수정 전후 지표·요청 기록·이벤트 trace가 정확히 일치함을 확인했다.
+
 [낮은 Outstanding에서 조회 지연의 성능 영향 한 장 자료](docs/execution_model/LOW_OUTSTANDING_LOOKUP_IMPACT_KO.docx) — hit 100%, 조회 0.5µs에서 O=1 처리량 79.6% 감소, O=2 59.3% 감소.
 
 [경계값과 첫 AR → RLAST 쉬운 설명](docs/execution_model/BOUNDARY_AND_AR_RLAST_KO.md) — 0.384µs 경계, 첫 응답 512ns, 평균 약 513.5ns의 계산과 타임라인.

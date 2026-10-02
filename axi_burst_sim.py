@@ -1,7 +1,7 @@
 """Burst-level timing experiment; microseconds, bytes. Not AXI RTL.
 
 AR is accepted one per clock, R is globally in order, outstanding retires at
-RLAST. One 16KiB NAND page backs four independently admitted 4KiB bursts.
+RLAST. Configurable bursts within one NAND page merge into one page read.
 """
 from dataclasses import dataclass, asdict
 from collections import deque
@@ -45,7 +45,7 @@ class Simulator:
         self.c=c;self.now=0.;self.seq=0;self.events=[];self.trace=[]
         self.pp=c.request_bytes//c.page_bytes;self.bp=c.page_bytes//c.burst_bytes
         self.br=c.request_bytes//c.burst_bytes;self.total=c.requests*self.br
-        self.pages={};self.bursts={};self.ar_queue=deque();self.next_r=0
+        self.pages={};self.pending_pages={};self.bursts={};self.ar_queue=deque();self.next_r=0
         self.active=0;self.peak=0;self.ar_scheduled=False;self.r_busy=False
         self.plane_busy=set();self.cmd_busy=set();self.io_busy=set()
         self.used=0;self.buffer_peak=0;self.nand_bytes=0
@@ -67,6 +67,7 @@ class Simulator:
             plane=(k//self.c.chips if self.c.mapping=='striped' else k)%self.c.planes
             self.pages[pid]=dict(pid=pid,req=req,state='queued',chip=chip,plane=plane,ch=chip%self.c.channels,
                                  ready=None,prefetch=prefetch,returned=0)
+            self.pending_pages[pid]=self.pages[pid]
         return self.pages[pid]
     def schedule_ar(self):
         if self.ar_queue and self.active<self.c.outstanding and not self.ar_scheduled:
@@ -74,7 +75,7 @@ class Simulator:
             self.event(max(self.now,getattr(self,'next_ar_time',0.)),'ar',None)
     def dispatch(self):
         c=self.c
-        for p in sorted(self.pages.values(),key=lambda x:x['pid']):
+        for p in sorted(self.pending_pages.values(),key=lambda x:x['pid']):
             if p['state']!='queued':continue
             plane=(p['chip'],p['plane'])
             # Reserve space for the oldest unreturned page to prevent HOL deadlock.
@@ -85,7 +86,7 @@ class Simulator:
             self.used+=c.page_bytes;self.buffer_peak=max(self.buffer_peak,self.used)
             p['state']='command';self.plane_busy.add(plane);self.cmd_busy.add(p['chip'])
             self.log('nand_issue',page=p['pid']);self.event(self.now+c.command_us,'sense',p['pid'])
-        for p in sorted(self.pages.values(),key=lambda x:x['pid']):
+        for p in sorted(self.pending_pages.values(),key=lambda x:x['pid']):
             if p['state']=='sensed' and p['ch'] not in self.io_busy:
                 self.io_busy.add(p['ch']);p['state']='transfer'
                 self.event(self.now+c.page_bytes/(c.io_gbps*1000)+c.turnaround_us,'transfer_done',p['pid'])
@@ -95,7 +96,7 @@ class Simulator:
     def start_r(self):
         if self.r_busy or not self.eligible(self.next_r):return
         c=self.c;b=self.bursts[self.next_r];b['r_start']=self.now;self.r_busy=True
-        # AR uses its own channel; R occupies exactly 128 cycles for 4KiB.
+        # AR uses its own channel; R duration follows burst size and bus width.
         duration=(c.burst_bytes*8/c.axi_width_bits)/c.axi_clock_mhz
         self.event(self.now+duration,'rlast',self.next_r)
     def snapshot(self,pid):
@@ -108,7 +109,7 @@ class Simulator:
             t,_,kind,data=heapq.heappop(self.events)
             if self.next_r<self.total and self.bursts and not self.r_busy:
                 self.idle+=t-self.now
-                if not self.eligible(self.next_r) and any(self.eligible(b) for b in self.bursts if b>self.next_r):self.hol_idle+=t-self.now
+                if not self.eligible(self.next_r) and any(self.eligible(b) for b in range(self.next_r+1,self.next_r+self.active)):self.hol_idle+=t-self.now
             self.now=t
             if kind=='demand':
                 self.ar_queue.extend(range(data*self.br,(data+1)*self.br))
@@ -134,6 +135,7 @@ class Simulator:
                 self.nand_bytes+=c.page_bytes;p['state']='ecc';self.event(self.now+c.ecc_us,'ready',data)
             elif kind=='ready':
                 p=self.pages[data];p['state']='ready';p['ready']=self.now;self.log('page_ready',page=data)
+                del self.pending_pages[data]
             elif kind=='rlast':
                 assert data==self.next_r
                 b=self.bursts[data];b['rlast']=self.now;self.active-=1;self.next_r+=1;self.r_busy=False
