@@ -2,6 +2,37 @@
 
 [임원용 핵심 보고서 PDF](docs/executive_brief/NAND_Prefetch_Executive_Brief_KO.pdf) · [편집용 Word](docs/executive_brief/NAND_Prefetch_Executive_Brief_KO.docx)
 
+## 4포트·512bit Host: 256GB/s 확장
+
+[반영 사항 임원 보고 1쪽 PDF](docs/executive_multiport_256/NAND_4Port_256GBps_Executive_Brief_KO.pdf) · [편집용 Word](docs/executive_multiport_256/NAND_4Port_256GBps_Executive_Brief_KO.docx) · [전체 결과](results/multiport_256/RESULTS_KO.md)
+
+`multiport_sim.py`는 독립 AR/R 포트 4개와 공유 NAND·버퍼를 모델링한다. 포트당 512bit·1GHz, 64B burst로 합계 상한 256GB/s다. `outstanding`, `lookup_slots`, `lookup_pipelines`는 포트당 값이다. 포트 내부 FIFO 반환을 보장하며 요청 완료는 모든 구성 burst의 최종 반환으로 집계한다. 포트 간 전역 반환 순서는 강제하지 않는다.
+
+500MHz·조회 500ns에는 포트당 슬롯 500개, 파이프라인 2개, ready outstanding 502개를 권장한다. 501개는 lookup clock edge 정렬 대기를 제외한 경계다. 1GHz·0ns 비교 설계는 슬롯 4배·동일 파이프라인 수다. NAND 128채널·전체 page 분산 배치·포트당 outstanding 1만 개에서 후반부 256GB/s를 확인했다. 32MiB cold 읽기의 전체 평균은 초기 대기를 포함해 238.26GB/s다. 기존 GUI는 이전 단일 포트 결과다.
+
+```sh
+python3 -m unittest -q
+python3 experiments/run_multiport_256.py
+python3 experiments/summarize_multiport_256.py
+python3 multiport_sim.py --config results/multiport_256/config_slow_ready.json --out scratch/multiport_ready
+```
+
+## 조회 클럭·투입 간격·상대 파워 추가 비교
+
+[클럭·에너지 임원 보고 1쪽 PDF](docs/executive_clock_power/NAND_Lookup_Clock_Power_Executive_Brief_KO.pdf) · [편집용 Word](docs/executive_clock_power/NAND_Lookup_Clock_Power_Executive_Brief_KO.docx)
+
+[1GHz·0ns vs 500MHz·500ns 결과](results/lookup_clock_power_64b/RESULTS_KO.md) · [전체 CSV](results/lookup_clock_power_64b/sweep.csv) · [비교 그래프](results/lookup_clock_power_64b/comparison.png)
+
+`lookup_clock_mhz`로 조회 클럭, `lookup_pipelines`로 독립 투입 파이프라인 수, `lookup_ii_cycles`로 파이프라인별 새 조회 투입 간격을 설정한다. 기존 `lookup_slots`는 조회 중인 건수를 제한한다. 클럭 기본값 `None`은 기존 동작을 유지한다. 0ns 조회도 클럭을 지정하면 투입 속도가 제한된다. 조회 클럭과 AXI 클럭은 독립적이다.
+
+같은 슬롯·파이프라인 수에서 1GHz·0ns와 500MHz·500ns를 비교했다. AXI는 양쪽 모두 1GHz로 고정한다. `lookup_power.py`는 클럭 활성 횟수·조회·FIFO·누설·배경·AXI·NAND 에너지를 상대 단위 EU로 계산한다. 예시 계수이며 실제 장치의 W·J가 아니다. 클럭 gating과 추가 저전압 가정을 별도로 비교하고, 동일 작업량 에너지와 평균 파워를 구분한다. 기존 GUI 내장 결과는 이전 실험이다.
+
+```sh
+python3 -m unittest -q
+python3 experiments/run_lookup_clock_power.py
+python3 experiments/summarize_lookup_clock_power.py
+```
+
 ## 유한 조회 슬롯: 병렬 hit/miss 조회 제한
 
 [슬롯 제한 결과](results/lookup_slots_64b/RESULTS_KO.md) · [전체 CSV](results/lookup_slots_64b/sweep.csv) · [처리량·조회 대기 그래프](results/lookup_slots_64b/ready_heatmap.png)

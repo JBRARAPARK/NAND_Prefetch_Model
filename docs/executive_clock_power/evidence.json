@@ -1,0 +1,29 @@
+{
+  "source_csv": "results/lookup_clock_power_64b/sweep.csv",
+  "source_csv_sha256": "11e12cd96087743ab4dbd994a12660a0a55a6542d7029b376add0893df4634e6",
+  "source_manifest_sha256": "bf968fd090cf61da8adf481e39d561037d4bc98f2919b59daaa9aaa96ad7dc72",
+  "source_simulator_cases": 216,
+  "source_energy_rows": 648,
+  "build_script_sha256": "2d89d13967c845bd45504767035332dc0cab06d7f3fbad8a4503dca82e025f19",
+  "verified_pdf_pages": 1,
+  "table_rows": [
+    [
+      "슬롯 64개 · 1V",
+      "8.19",
+      "35.1%",
+      "137.3%"
+    ],
+    [
+      "슬롯 250개 · 1V",
+      "31.76",
+      "99.4%",
+      "100.1%"
+    ],
+    [
+      "슬롯 250개 · 0.8V",
+      "31.76",
+      "73.2%",
+      "73.7%"
+    ]
+  ]
+}

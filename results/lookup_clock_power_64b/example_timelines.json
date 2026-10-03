@@ -1,0 +1,522 @@
+{
+  "fast_C64": [
+    {
+      "burst": 0,
+      "ar": 0.0,
+      "lookup_start": 0.0,
+      "lookup_complete_us": 0.0,
+      "r_start": 0.0,
+      "rlast": 0.002
+    },
+    {
+      "burst": 1,
+      "ar": 0.001,
+      "lookup_start": 0.001,
+      "lookup_complete_us": 0.001,
+      "r_start": 0.002,
+      "rlast": 0.004
+    },
+    {
+      "burst": 2,
+      "ar": 0.002,
+      "lookup_start": 0.002,
+      "lookup_complete_us": 0.002,
+      "r_start": 0.004,
+      "rlast": 0.006
+    },
+    {
+      "burst": 3,
+      "ar": 0.003,
+      "lookup_start": 0.003,
+      "lookup_complete_us": 0.003,
+      "r_start": 0.006,
+      "rlast": 0.008
+    },
+    {
+      "burst": 4,
+      "ar": 0.004,
+      "lookup_start": 0.004,
+      "lookup_complete_us": 0.004,
+      "r_start": 0.008,
+      "rlast": 0.01
+    },
+    {
+      "burst": 5,
+      "ar": 0.005,
+      "lookup_start": 0.005,
+      "lookup_complete_us": 0.005,
+      "r_start": 0.01,
+      "rlast": 0.012
+    },
+    {
+      "burst": 6,
+      "ar": 0.006,
+      "lookup_start": 0.006,
+      "lookup_complete_us": 0.006,
+      "r_start": 0.012,
+      "rlast": 0.014
+    },
+    {
+      "burst": 7,
+      "ar": 0.007,
+      "lookup_start": 0.007,
+      "lookup_complete_us": 0.007,
+      "r_start": 0.014,
+      "rlast": 0.016
+    },
+    {
+      "burst": 8,
+      "ar": 0.008,
+      "lookup_start": 0.008,
+      "lookup_complete_us": 0.008,
+      "r_start": 0.016,
+      "rlast": 0.018
+    },
+    {
+      "burst": 9,
+      "ar": 0.009,
+      "lookup_start": 0.009,
+      "lookup_complete_us": 0.009,
+      "r_start": 0.018,
+      "rlast": 0.02
+    },
+    {
+      "burst": 10,
+      "ar": 0.01,
+      "lookup_start": 0.01,
+      "lookup_complete_us": 0.01,
+      "r_start": 0.02,
+      "rlast": 0.022
+    },
+    {
+      "burst": 11,
+      "ar": 0.011,
+      "lookup_start": 0.011,
+      "lookup_complete_us": 0.011,
+      "r_start": 0.022,
+      "rlast": 0.024
+    },
+    {
+      "burst": 12,
+      "ar": 0.012,
+      "lookup_start": 0.012,
+      "lookup_complete_us": 0.012,
+      "r_start": 0.024,
+      "rlast": 0.026
+    },
+    {
+      "burst": 13,
+      "ar": 0.013,
+      "lookup_start": 0.013,
+      "lookup_complete_us": 0.013,
+      "r_start": 0.026,
+      "rlast": 0.028
+    },
+    {
+      "burst": 14,
+      "ar": 0.014,
+      "lookup_start": 0.014,
+      "lookup_complete_us": 0.014,
+      "r_start": 0.028,
+      "rlast": 0.03
+    },
+    {
+      "burst": 15,
+      "ar": 0.015,
+      "lookup_start": 0.015,
+      "lookup_complete_us": 0.015,
+      "r_start": 0.03,
+      "rlast": 0.032
+    }
+  ],
+  "slow_C64": [
+    {
+      "burst": 0,
+      "ar": 0.0,
+      "lookup_start": 0.0,
+      "lookup_complete_us": 0.5,
+      "r_start": 0.5,
+      "rlast": 0.502
+    },
+    {
+      "burst": 1,
+      "ar": 0.001,
+      "lookup_start": 0.002,
+      "lookup_complete_us": 0.502,
+      "r_start": 0.502,
+      "rlast": 0.504
+    },
+    {
+      "burst": 2,
+      "ar": 0.002,
+      "lookup_start": 0.004,
+      "lookup_complete_us": 0.504,
+      "r_start": 0.504,
+      "rlast": 0.506
+    },
+    {
+      "burst": 3,
+      "ar": 0.003,
+      "lookup_start": 0.006,
+      "lookup_complete_us": 0.506,
+      "r_start": 0.506,
+      "rlast": 0.508
+    },
+    {
+      "burst": 4,
+      "ar": 0.004,
+      "lookup_start": 0.008,
+      "lookup_complete_us": 0.508,
+      "r_start": 0.508,
+      "rlast": 0.51
+    },
+    {
+      "burst": 5,
+      "ar": 0.005,
+      "lookup_start": 0.01,
+      "lookup_complete_us": 0.51,
+      "r_start": 0.51,
+      "rlast": 0.512
+    },
+    {
+      "burst": 6,
+      "ar": 0.006,
+      "lookup_start": 0.012,
+      "lookup_complete_us": 0.512,
+      "r_start": 0.512,
+      "rlast": 0.514
+    },
+    {
+      "burst": 7,
+      "ar": 0.007,
+      "lookup_start": 0.014,
+      "lookup_complete_us": 0.514,
+      "r_start": 0.514,
+      "rlast": 0.516
+    },
+    {
+      "burst": 8,
+      "ar": 0.008,
+      "lookup_start": 0.016,
+      "lookup_complete_us": 0.516,
+      "r_start": 0.516,
+      "rlast": 0.518
+    },
+    {
+      "burst": 9,
+      "ar": 0.009,
+      "lookup_start": 0.018,
+      "lookup_complete_us": 0.518,
+      "r_start": 0.518,
+      "rlast": 0.52
+    },
+    {
+      "burst": 10,
+      "ar": 0.01,
+      "lookup_start": 0.02,
+      "lookup_complete_us": 0.52,
+      "r_start": 0.52,
+      "rlast": 0.522
+    },
+    {
+      "burst": 11,
+      "ar": 0.011,
+      "lookup_start": 0.022,
+      "lookup_complete_us": 0.522,
+      "r_start": 0.522,
+      "rlast": 0.524
+    },
+    {
+      "burst": 12,
+      "ar": 0.012,
+      "lookup_start": 0.024,
+      "lookup_complete_us": 0.524,
+      "r_start": 0.524,
+      "rlast": 0.526
+    },
+    {
+      "burst": 13,
+      "ar": 0.013,
+      "lookup_start": 0.026,
+      "lookup_complete_us": 0.526,
+      "r_start": 0.526,
+      "rlast": 0.528
+    },
+    {
+      "burst": 14,
+      "ar": 0.014,
+      "lookup_start": 0.028,
+      "lookup_complete_us": 0.528,
+      "r_start": 0.528,
+      "rlast": 0.53
+    },
+    {
+      "burst": 15,
+      "ar": 0.015,
+      "lookup_start": 0.03,
+      "lookup_complete_us": 0.53,
+      "r_start": 0.53,
+      "rlast": 0.532
+    }
+  ],
+  "fast_C250": [
+    {
+      "burst": 0,
+      "ar": 0.0,
+      "lookup_start": 0.0,
+      "lookup_complete_us": 0.0,
+      "r_start": 0.0,
+      "rlast": 0.002
+    },
+    {
+      "burst": 1,
+      "ar": 0.001,
+      "lookup_start": 0.001,
+      "lookup_complete_us": 0.001,
+      "r_start": 0.002,
+      "rlast": 0.004
+    },
+    {
+      "burst": 2,
+      "ar": 0.002,
+      "lookup_start": 0.002,
+      "lookup_complete_us": 0.002,
+      "r_start": 0.004,
+      "rlast": 0.006
+    },
+    {
+      "burst": 3,
+      "ar": 0.003,
+      "lookup_start": 0.003,
+      "lookup_complete_us": 0.003,
+      "r_start": 0.006,
+      "rlast": 0.008
+    },
+    {
+      "burst": 4,
+      "ar": 0.004,
+      "lookup_start": 0.004,
+      "lookup_complete_us": 0.004,
+      "r_start": 0.008,
+      "rlast": 0.01
+    },
+    {
+      "burst": 5,
+      "ar": 0.005,
+      "lookup_start": 0.005,
+      "lookup_complete_us": 0.005,
+      "r_start": 0.01,
+      "rlast": 0.012
+    },
+    {
+      "burst": 6,
+      "ar": 0.006,
+      "lookup_start": 0.006,
+      "lookup_complete_us": 0.006,
+      "r_start": 0.012,
+      "rlast": 0.014
+    },
+    {
+      "burst": 7,
+      "ar": 0.007,
+      "lookup_start": 0.007,
+      "lookup_complete_us": 0.007,
+      "r_start": 0.014,
+      "rlast": 0.016
+    },
+    {
+      "burst": 8,
+      "ar": 0.008,
+      "lookup_start": 0.008,
+      "lookup_complete_us": 0.008,
+      "r_start": 0.016,
+      "rlast": 0.018
+    },
+    {
+      "burst": 9,
+      "ar": 0.009,
+      "lookup_start": 0.009,
+      "lookup_complete_us": 0.009,
+      "r_start": 0.018,
+      "rlast": 0.02
+    },
+    {
+      "burst": 10,
+      "ar": 0.01,
+      "lookup_start": 0.01,
+      "lookup_complete_us": 0.01,
+      "r_start": 0.02,
+      "rlast": 0.022
+    },
+    {
+      "burst": 11,
+      "ar": 0.011,
+      "lookup_start": 0.011,
+      "lookup_complete_us": 0.011,
+      "r_start": 0.022,
+      "rlast": 0.024
+    },
+    {
+      "burst": 12,
+      "ar": 0.012,
+      "lookup_start": 0.012,
+      "lookup_complete_us": 0.012,
+      "r_start": 0.024,
+      "rlast": 0.026
+    },
+    {
+      "burst": 13,
+      "ar": 0.013,
+      "lookup_start": 0.013,
+      "lookup_complete_us": 0.013,
+      "r_start": 0.026,
+      "rlast": 0.028
+    },
+    {
+      "burst": 14,
+      "ar": 0.014,
+      "lookup_start": 0.014,
+      "lookup_complete_us": 0.014,
+      "r_start": 0.028,
+      "rlast": 0.03
+    },
+    {
+      "burst": 15,
+      "ar": 0.015,
+      "lookup_start": 0.015,
+      "lookup_complete_us": 0.015,
+      "r_start": 0.03,
+      "rlast": 0.032
+    }
+  ],
+  "slow_C250": [
+    {
+      "burst": 0,
+      "ar": 0.0,
+      "lookup_start": 0.0,
+      "lookup_complete_us": 0.5,
+      "r_start": 0.5,
+      "rlast": 0.502
+    },
+    {
+      "burst": 1,
+      "ar": 0.001,
+      "lookup_start": 0.002,
+      "lookup_complete_us": 0.502,
+      "r_start": 0.502,
+      "rlast": 0.504
+    },
+    {
+      "burst": 2,
+      "ar": 0.002,
+      "lookup_start": 0.004,
+      "lookup_complete_us": 0.504,
+      "r_start": 0.504,
+      "rlast": 0.506
+    },
+    {
+      "burst": 3,
+      "ar": 0.003,
+      "lookup_start": 0.006,
+      "lookup_complete_us": 0.506,
+      "r_start": 0.506,
+      "rlast": 0.508
+    },
+    {
+      "burst": 4,
+      "ar": 0.004,
+      "lookup_start": 0.008,
+      "lookup_complete_us": 0.508,
+      "r_start": 0.508,
+      "rlast": 0.51
+    },
+    {
+      "burst": 5,
+      "ar": 0.005,
+      "lookup_start": 0.01,
+      "lookup_complete_us": 0.51,
+      "r_start": 0.51,
+      "rlast": 0.512
+    },
+    {
+      "burst": 6,
+      "ar": 0.006,
+      "lookup_start": 0.012,
+      "lookup_complete_us": 0.512,
+      "r_start": 0.512,
+      "rlast": 0.514
+    },
+    {
+      "burst": 7,
+      "ar": 0.007,
+      "lookup_start": 0.014,
+      "lookup_complete_us": 0.514,
+      "r_start": 0.514,
+      "rlast": 0.516
+    },
+    {
+      "burst": 8,
+      "ar": 0.008,
+      "lookup_start": 0.016,
+      "lookup_complete_us": 0.516,
+      "r_start": 0.516,
+      "rlast": 0.518
+    },
+    {
+      "burst": 9,
+      "ar": 0.009,
+      "lookup_start": 0.018,
+      "lookup_complete_us": 0.518,
+      "r_start": 0.518,
+      "rlast": 0.52
+    },
+    {
+      "burst": 10,
+      "ar": 0.01,
+      "lookup_start": 0.02,
+      "lookup_complete_us": 0.52,
+      "r_start": 0.52,
+      "rlast": 0.522
+    },
+    {
+      "burst": 11,
+      "ar": 0.011,
+      "lookup_start": 0.022,
+      "lookup_complete_us": 0.522,
+      "r_start": 0.522,
+      "rlast": 0.524
+    },
+    {
+      "burst": 12,
+      "ar": 0.012,
+      "lookup_start": 0.024,
+      "lookup_complete_us": 0.524,
+      "r_start": 0.524,
+      "rlast": 0.526
+    },
+    {
+      "burst": 13,
+      "ar": 0.013,
+      "lookup_start": 0.026,
+      "lookup_complete_us": 0.526,
+      "r_start": 0.526,
+      "rlast": 0.528
+    },
+    {
+      "burst": 14,
+      "ar": 0.014,
+      "lookup_start": 0.028,
+      "lookup_complete_us": 0.528,
+      "r_start": 0.528,
+      "rlast": 0.53
+    },
+    {
+      "burst": 15,
+      "ar": 0.015,
+      "lookup_start": 0.03,
+      "lookup_complete_us": 0.53,
+      "r_start": 0.53,
+      "rlast": 0.532
+    }
+  ]
+}

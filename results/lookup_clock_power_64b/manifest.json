@@ -1,0 +1,83 @@
+{
+  "base_config": {
+    "requests": 32,
+    "request_bytes": 65536,
+    "page_bytes": 16384,
+    "burst_bytes": 64,
+    "chips": 4,
+    "channels": 4,
+    "planes": 6,
+    "mapping": "striped",
+    "tr_us": 2.08,
+    "lookup_us": 0.0,
+    "lookup_slots": null,
+    "lookup_clock_mhz": null,
+    "lookup_pipelines": 1,
+    "lookup_ii_cycles": 1,
+    "outstanding": 1,
+    "scenario": "none",
+    "period_us": 0.0,
+    "first_demand_us": 20000.0,
+    "early_lead_us": 10000.0,
+    "late_lead_us": 1.5,
+    "buffer_bytes": 8388608,
+    "io_gbps": 2.4,
+    "command_us": 0.1,
+    "turnaround_us": 0.05,
+    "ecc_us": 0.2,
+    "axi_width_bits": 256,
+    "axi_clock_mhz": 1000
+  },
+  "power_coefficients": {
+    "reference_voltage_v": 1.0,
+    "lookup_voltage_v": 1.0,
+    "clock_gating": true,
+    "clock_eu_per_cycle": 1.0,
+    "slot_clock_eu_per_cycle": 0.002,
+    "pipeline_clock_eu_per_cycle": 0.05,
+    "lookup_eu_per_operation": 8.0,
+    "queue_eu_per_transition": 0.5,
+    "leakage_eu_per_us": 100.0,
+    "slot_leakage_eu_per_us": 0.1,
+    "pipeline_leakage_eu_per_us": 1.0,
+    "background_eu_per_us": 200.0,
+    "axi_eu_per_byte": 0.05,
+    "nand_eu_per_byte": 0.5
+  },
+  "lower_voltage_hypothesis_v": 0.8,
+  "slots": [
+    1,
+    4,
+    16,
+    64,
+    128,
+    200,
+    250,
+    500
+  ],
+  "outstanding": [
+    100,
+    251,
+    500
+  ],
+  "scenarios": [
+    "ready",
+    "none",
+    "late",
+    "mixed"
+  ],
+  "comparison_pairs": 108,
+  "simulator_cases": 216,
+  "energy_rows": 648,
+  "runtime_seconds": 226.58633797599987,
+  "python": "3.12.14",
+  "base_commit": "34005b46159ac89ee3617f51c8ad227998f4165c",
+  "source_sha256": {
+    "axi_burst_sim.py": "ed0fde5a1221959a623c725fa68e8db1d5536dbecbb2af46d87891814a8b4726",
+    "lookup_power.py": "ee9a3f235ba25e08232225d4237c966c9b06b99b23fac8177a2f746f35dcc443",
+    "test_lookup_clock_power.py": "27bfd93016d7ba49ae6d599aef9c42566704c4657f293c8293897b858cd63053",
+    "experiments/run_lookup_clock_power.py": "4fc0b286c05afa5106d97077389d7dcc2de23fe3d712b37bf945a45536695f18",
+    "experiments/summarize_lookup_clock_power.py": "90bbf668fedb5dcc84da5f9e4feb15ec6f794644485a8cd5cac10328ab1864e8"
+  },
+  "semantics": "Only lookup clock changes; AXI stays 1GHz. Equal slots, pipelines and II cycles within each pair. Zero latency is ideal service with clock-limited admission. Phase-aligned domains; no extra CDC delay. Demand window first AR to last RLAST excludes prefetch warmup. Relative EU coefficients are illustrative, not device watts. Voltage does not change timing or leakage automatically."
+}

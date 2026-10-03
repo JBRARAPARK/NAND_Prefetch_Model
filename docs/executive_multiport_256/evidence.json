@@ -1,0 +1,40 @@
+{
+  "source_csv": "results/multiport_256/sweep.csv",
+  "source_csv_sha256": "8d5becba67ebec578704e906051f7816e92ab4121cc6e846e1cc1aad856f1f31",
+  "source_manifest_sha256": "a54496d95bdf1c153d43b425b762c86fb9cf16f2c9188a74616d7c13b7769c57",
+  "build_script_sha256": "34fe08d5ddd88e4a287ce0db6e6cf254133bc1716b8f9f3bc591df5069d186e0",
+  "layout_script_sha256": "8ea7c4fda8bb6499983a52b8a1750df48209072011313e5061c4b8dbc67f95df",
+  "verified_pdf_pages": 1,
+  "table_rows": [
+    [
+      "Ready · 1GHz",
+      "8",
+      "256.00",
+      "256.00"
+    ],
+    [
+      "Ready · 500MHz",
+      "8",
+      "252.14",
+      "256.00"
+    ],
+    [
+      "NAND · 4채널",
+      "8",
+      "9.50",
+      "9.53"
+    ],
+    [
+      "NAND · 128채널",
+      "8",
+      "197.26",
+      "256.00"
+    ],
+    [
+      "NAND · 128채널",
+      "32",
+      "238.26",
+      "256.00"
+    ]
+  ]
+}

@@ -23,6 +23,11 @@ class Config:
     # None preserves the original unlimited concurrent lookup model.
     # One slot is occupied from lookup start through completion (not RLAST).
     lookup_slots: int | None = None
+    # None preserves legacy timing. Clock phase is zero at first_demand_us.
+    # Pipelines control admission rate; slots independently bound in-flight work.
+    lookup_clock_mhz: float | None = None
+    lookup_pipelines: int = 1
+    lookup_ii_cycles: int = 1
     outstanding: int = 1
     scenario: str = 'none'
     period_us: float = 0.0
@@ -40,19 +45,27 @@ class Config:
 class Simulator:
     def __init__(self, c):
         if c.scenario not in ('none','ready','late','mixed'): raise ValueError('scenario')
-        if c.mapping not in ('single','striped'): raise ValueError('mapping')
+        if c.mapping not in ('single','striped','global_striped'): raise ValueError('mapping')
         if min(c.requests,c.outstanding,c.channels,c.chips,c.planes)<=0: raise ValueError('positive sizes')
         if c.request_bytes%c.page_bytes or c.page_bytes%c.burst_bytes: raise ValueError('alignment')
         if c.burst_bytes>4096 or c.burst_bytes*8%c.axi_width_bits: raise ValueError('burst')
         if c.buffer_bytes<c.page_bytes or min(c.lookup_us,c.tr_us,c.period_us)<0: raise ValueError('timing/capacity')
         if c.lookup_slots is not None and (type(c.lookup_slots) is not int or c.lookup_slots<=0):
             raise ValueError('lookup_slots must be a positive integer or None')
+        if c.lookup_clock_mhz is not None and (isinstance(c.lookup_clock_mhz,bool) or
+                not math.isfinite(c.lookup_clock_mhz) or c.lookup_clock_mhz<=0):
+            raise ValueError('lookup_clock_mhz must be finite and positive or None')
+        for name in ('lookup_pipelines','lookup_ii_cycles'):
+            if type(getattr(c,name)) is not int or getattr(c,name)<=0:
+                raise ValueError(f'{name} must be a positive integer')
         self.c=c;self.now=0.;self.seq=0;self.events=[];self.trace=[]
         self.pp=c.request_bytes//c.page_bytes;self.bp=c.page_bytes//c.burst_bytes
         self.br=c.request_bytes//c.burst_bytes;self.total=c.requests*self.br
         self.pages={};self.pending_pages={};self.bursts={};self.ar_queue=deque();self.next_r=0
         self.active=0;self.peak=0;self.ar_scheduled=False;self.r_busy=False
         self.lookup_queue=deque();self.lookup_active=0;self.lookup_peak=0;self.lookup_queue_peak=0
+        self.lookup_wakeup_scheduled=False
+        self.lookup_lanes=[(c.first_demand_us,i) for i in range(c.lookup_pipelines)]
         self.ready_bursts=set()
         self.plane_busy=set();self.cmd_busy=set();self.io_busy=set()
         self.used=0;self.buffer_peak=0;self.nand_bytes=0
@@ -72,6 +85,9 @@ class Simulator:
             req,k=divmod(pid,self.pp);start=req%self.c.chips
             chip=(start+k)%self.c.chips if self.c.mapping=='striped' else start
             plane=(k//self.c.chips if self.c.mapping=='striped' else k)%self.c.planes
+            if self.c.mapping=='global_striped':
+                chip=pid%self.c.chips
+                plane=(pid//self.c.chips)%self.c.planes
             self.pages[pid]=dict(pid=pid,req=req,state='queued',chip=chip,plane=plane,ch=chip%self.c.channels,
                                  ready=None,prefetch=prefetch,returned=0)
             self.pending_pages[pid]=self.pages[pid]
@@ -84,19 +100,37 @@ class Simulator:
         """FIFO service; queued ARs still occupy AXI outstanding credits."""
         limit=self.c.lookup_slots
         while self.lookup_queue and (limit is None or self.lookup_active<limit):
+            lane=None
+            if self.c.lookup_clock_mhz is not None:
+                next_time,lane=self.lookup_lanes[0]
+                start=self.lookup_clock_edge(max(self.now,next_time))
+                if start>self.now+1e-10:
+                    if not self.lookup_wakeup_scheduled:
+                        self.lookup_wakeup_scheduled=True
+                        self.event(start,'lookup_wakeup',None)
+                    break
+                heapq.heapreplace(self.lookup_lanes,
+                                 (self.now+self.c.lookup_ii_cycles/self.c.lookup_clock_mhz,lane))
             bid=self.lookup_queue.popleft()
             self.bursts[bid]['lookup_start']=self.now
+            if lane is not None:self.bursts[bid]['lookup_pipeline']=lane
             self.lookup_active+=1;self.lookup_peak=max(self.lookup_peak,self.lookup_active)
             self.log('lookup_start',burst=bid,lookup_active=self.lookup_active)
             self.event(self.now+self.c.lookup_us,'lookup',bid)
         self.lookup_queue_peak=max(self.lookup_queue_peak,len(self.lookup_queue))
+    def lookup_clock_edge(self,t):
+        """First lookup-domain edge at/after t; tolerate float cancellation."""
+        origin=self.c.first_demand_us
+        # Existing AR/R times add small durations to a 20,000us epoch. Their
+        # accumulated roundoff must not manufacture an extra lookup cycle.
+        return origin+math.ceil((t-origin)*self.c.lookup_clock_mhz-1e-4)/self.c.lookup_clock_mhz
     def dispatch(self):
         c=self.c
         for p in sorted(self.pending_pages.values(),key=lambda x:x['pid']):
             if p['state']!='queued':continue
             plane=(p['chip'],p['plane'])
             # Reserve space for the oldest unreturned page to prevent HOL deadlock.
-            head=self.next_r//self.bp
+            head=self.head_page()
             reserve=0 if head in self.pages and self.pages[head]['state']!='queued' else c.page_bytes
             if self.used+c.page_bytes+(reserve if p['pid']!=head else 0)>c.buffer_bytes:continue
             if plane in self.plane_busy or p['chip'] in self.cmd_busy:continue
@@ -107,6 +141,8 @@ class Simulator:
             if p['state']=='sensed' and p['ch'] not in self.io_busy:
                 self.io_busy.add(p['ch']);p['state']='transfer'
                 self.event(self.now+c.page_bytes/(c.io_gbps*1000)+c.turnaround_us,'transfer_done',p['pid'])
+    def head_page(self):
+        return self.next_r//self.bp
     def eligible(self,bid):
         b=self.bursts.get(bid)
         return b is not None and b['lookup_done'] and self.pages.get(bid//self.bp,{}).get('ready') is not None
@@ -147,6 +183,9 @@ class Simulator:
                 self.log('lookup_done',burst=data,lookup_active=self.lookup_active)
                 self.page(data//self.bp)
                 if self.eligible(data):self.ready_bursts.add(data)
+                self.start_lookups()
+            elif kind=='lookup_wakeup':
+                self.lookup_wakeup_scheduled=False
                 self.start_lookups()
             elif kind=='sense':
                 p=self.pages[data];self.cmd_busy.remove(p['chip']);p['state']='sense'
