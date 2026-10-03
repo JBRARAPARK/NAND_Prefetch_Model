@@ -11,3 +11,38 @@ config_tlc.json과 CSV는 복원된 소스로 다시 생성.
 가상환경 재구축: python3 -m venv .venv && .venv/bin/python -m pip install -r requirements.txt
 현재 수치는 특정 제품의 실측이 아닌 TLC 가정 기반 모델 결과.
 후속 세부 개선 항목은 README.md의 Next fidelity extensions 참고.
+
+2026-10-03: 조회 클럭·파워 및 4포트 모델 업그레이드 완료.
+구현·실험·보고서 반영 commit: b1af9cb722c2837c6398d50f70d321f23bba9d5b
+
+재개 시 확인 순서:
+1. docs/executive_multiport_256/NAND_4Port_256GBps_Executive_Brief_KO.pdf (임원용 1장)
+2. results/multiport_256/RESULTS_KO.md (반영 사항·조건·결과·실행 방법)
+3. multiport_sim.py 및 lookup_power.py (모델 구현)
+
+최종 구성:
+- Host: 512bit·1GHz 독립 AR/R 포트 4개, 64B burst, 합계 상한 256GB/s.
+- 조회 500MHz·500ns: 포트당 슬롯 500개·파이프라인 2개·투입 간격 1클럭.
+- 1GHz·0ns 비교 설계: 슬롯 4배(포트당 2,000개), 파이프라인 수 동일.
+- Ready outstanding은 클럭 정렬 대기를 반영해 501에서 502개/포트로 보정.
+- NAND 공급 실험: 128chip·128channel·chip당 6plane, global_striped page 배치,
+  채널당 2.4GB/s, tR 2.08us, buffer 8MiB, outstanding 10,000개/포트.
+- 포트 내부 반환 순서 보장. 포트 간 전역 반환 순서는 강제하지 않으며,
+  logical request는 모든 구성 burst가 반환된 뒤 완료.
+
+핵심 결과:
+- Ready 500MHz: 8MiB 전체 평균 252.14GB/s, 후반부 256GB/s.
+- Cold NAND 128채널: 32MiB 전체 평균 238.26GB/s, 후반부 256GB/s.
+- Cold NAND에서 outstanding 502개/포트이면 전체 평균 13.41GB/s.
+- 테스트 43개 통과, 직전 단일 포트 32개 조건 지표·trace·에너지 회귀 일치.
+- 4포트 비교는 성능 실행 24개, 에너지 계산 60개.
+
+실행:
+python3 -m unittest -q
+python3 multiport_sim.py --config results/multiport_256/config_slow_ready.json --out scratch/multiport_ready
+python3 experiments/run_multiport_256.py
+python3 experiments/summarize_multiport_256.py
+
+판단 범위: 예시 EU 계수의 상대 파워이며 실제 제품 W·J가 아님.
+0.8V에서 500MHz 동작은 가정. 내부 fabric/SRAM의 합계 256GB/s 처리도 가정.
+기존 GUI 내장 데이터는 이전 단일 포트 결과이며 새 4포트 결과와 구분할 것.
