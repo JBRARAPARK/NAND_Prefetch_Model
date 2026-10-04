@@ -62,3 +62,12 @@ python3 experiments/summarize_multiport_256.py
 - 실행: python3 experiments/run_prefetch_decision.py
 - 초기 지연·ready 적중률·판단 투입 병렬성에 따라 달라지는 모델 수치.
   이번에는 판단 회로 에너지나 기존 PDF/GUI를 갱신하지 않았음.
+
+2026-10-04: 전체 구조 상세 설명자료 20쪽 제작.
+- docs/architecture_details/NAND_Prefetch_Architecture_Detailed_KO.pdf / .docx
+- Host 4포트부터 선행/Host 판단·조회·NAND·buffer·FIFO 반환·성능·파워를 연결.
+- 23개 표, 구조·흐름·타이밍·상태 도식과 그래프 7개, 전체 파라미터 사전.
+- 공통 본문 content.py, 제작 build_report.py, 근거 evidence.json, 검증 verify_report.py.
+- PDF 20쪽·chapter bookmark 20개, Word도 실제 렌더링 20쪽 확인.
+- 최신 모델 commit ee8636d53db93bcbe6a26025ef9cc0e939a55ac6 기준.
+- 이번 작업은 설명자료이며 모델 소스와 기존 실험 결과는 변경하지 않음.

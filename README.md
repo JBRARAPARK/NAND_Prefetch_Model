@@ -1,5 +1,7 @@
 # NAND Prefetch and AXI Outstanding Model
 
+[전체 구조 상세 설명 PDF · 20쪽](docs/architecture_details/NAND_Prefetch_Architecture_Detailed_KO.pdf) · [편집용 Word](docs/architecture_details/NAND_Prefetch_Architecture_Detailed_KO.docx) · [구성과 재현](docs/architecture_details/README.md)
+
 [임원용 핵심 보고서 PDF](docs/executive_brief/NAND_Prefetch_Executive_Brief_KO.pdf) · [편집용 Word](docs/executive_brief/NAND_Prefetch_Executive_Brief_KO.docx)
 
 ## 4포트·512bit Host: 256GB/s 확장
