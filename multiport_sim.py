@@ -30,6 +30,11 @@ class MultiportConfig(Config):
     # 500ns service + up to 1ns lookup-edge wait + 1ns R return.
     outstanding: int = 502
     record_trace: bool = True
+    # Fixed, fully pipelined decision latency; these are separate placements.
+    # Ahead-path decisions delay speculative NAND issue, without holding AR.
+    prefetch_decision_us: float = 0.0
+    # Host-path decisions hold outstanding credits before the lookup queue.
+    host_decision_us: float = 0.0
 
 
 @dataclass
@@ -57,12 +62,22 @@ class MultiportSimulator(Simulator):
             raise ValueError('host_ports must be a positive integer')
         if type(c.record_trace) is not bool:raise ValueError('record_trace must be bool')
         if min(c.axi_clock_mhz,c.io_gbps)<=0:raise ValueError('positive clocks and bandwidth')
+        for name in ('prefetch_decision_us','host_decision_us'):
+            value=getattr(c,name)
+            if isinstance(value,bool) or not math.isfinite(value) or value<0:
+                raise ValueError(f'{name} must be finite and nonnegative')
         super().__init__(c)
         self.ports=[Port(i,i,[(c.first_demand_us,j) for j in range(c.lookup_pipelines)])
                     for i in range(c.host_ports)]
         self.port_idle=[0.]*c.host_ports;self.port_hol_idle=[0.]*c.host_ports
         self.port_ready=[set() for _ in self.ports]
         self.channel_busy_us=[0.]*c.channels
+
+    def event(self,t,kind,data):
+        # Base initialization schedules prediction triggers. The decision
+        # completes later, when speculative page reads may actually be issued.
+        if kind=='prefetch':t+=self.c.prefetch_decision_us
+        super().event(t,kind,data)
 
     def log(self,event,**kw):
         if self.c.record_trace:super().log(event,**kw)
@@ -120,6 +135,9 @@ class MultiportSimulator(Simulator):
                 for bid in range(data*self.br,(data+1)*self.br):
                     self.ports[bid%c.host_ports].ar_queue.append(bid)
             elif kind=='prefetch':
+                if c.prefetch_decision_us:
+                    self.log('prefetch_decision_done',request=data,
+                             decision_start_us=self.now-c.prefetch_decision_us)
                 for pid in range(data*self.pp,(data+1)*self.pp):self.page(pid,True)
                 nand_changed=True
             elif kind=='ar':
@@ -128,10 +146,16 @@ class MultiportSimulator(Simulator):
                     bid=p.ar_queue.popleft();p.active+=1;p.peak=max(p.peak,p.active)
                     self.active+=1;self.peak=max(self.peak,self.active);p.returns.append(bid)
                     self.bursts[bid]=dict(port=p.index,ar=self.now,lookup_done=False,
-                                          hit_at_ar=self.snapshot(bid//self.bp))
+                                          hit_at_ar=self.snapshot(bid//self.bp),
+                                          decision_complete_us=self.now+c.host_decision_us)
                     self.log('ar',burst=bid,port=p.index,outstanding=p.active)
                     p.next_ar_time=self.now+1/c.axi_clock_mhz
-                    p.lookup_queue.append(bid);self.start_port_lookups(p)
+                    if c.host_decision_us:self.event(self.now+c.host_decision_us,'host_decision',bid)
+                    else:p.lookup_queue.append(bid);self.start_port_lookups(p)
+            elif kind=='host_decision':
+                p=self.ports[self.bursts[data]['port']]
+                self.log('host_decision_done',burst=data,port=p.index)
+                p.lookup_queue.append(data);self.start_port_lookups(p)
             elif kind=='lookup':
                 b=self.bursts[data];p=self.ports[b['port']]
                 b['lookup_done']=True;b['hit_at_lookup']=self.snapshot(data//self.bp)
@@ -205,6 +229,8 @@ class MultiportSimulator(Simulator):
                      mean_lookup_wait_us=sum(b['lookup_start']-b['ar'] for b in self.bursts.values())/self.total,
                      max_lookup_wait_us=max(b['lookup_start']-b['ar'] for b in self.bursts.values()),
                      mean_ar_to_lookup_done_us=sum(b['lookup_complete_us']-b['ar'] for b in self.bursts.values())/self.total,
+                     mean_host_decision_us=c.host_decision_us,
+                     prefetch_decision_us=c.prefetch_decision_us,
                      r_idle_us=sum(self.port_idle),hol_idle_us=sum(self.port_hol_idle),
                      used_nand_channels=len({p['ch'] for p in self.pages.values()}),
                      nand_raw_ceiling_gbps=c.channels*c.io_gbps,

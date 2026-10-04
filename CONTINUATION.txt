@@ -46,3 +46,19 @@ python3 experiments/summarize_multiport_256.py
 판단 범위: 예시 EU 계수의 상대 파워이며 실제 제품 W·J가 아님.
 0.8V에서 500MHz 동작은 가정. 내부 fabric/SRAM의 합계 256GB/s 처리도 가정.
 기존 GUI 내장 데이터는 이전 단일 포트 결과이며 새 4포트 결과와 구분할 것.
+
+2026-10-04: 4포트 합계 64GB/s와 판단 지연 100·200·300ns 반영.
+- 결과: results/prefetch_decision_64/RESULTS_KO.md 및 sweep.csv, configs.json, manifest.json.
+- 모델: prefetch_decision_us는 speculative NAND 요청 전 판단 지연,
+  host_decision_us는 AR 이후 조회 큐 전 판단 지연. 기본값 0, 단위 us.
+  같은 판단을 양쪽에 중복하지 않는다. 판단은 고정 지연·완전 파이프라인 가정.
+- 선행 판단: 예측 lead 10us·판단 100/200/300ns에서 ready hit 유지,
+  outstanding 128개/포트·4포트 512개로 후반 64GB/s 유지.
+- AR 이후 판단: 기존 조회 500ns에 추가될 때 권장 160/192/224개/포트,
+  4포트 합계 640/768/896개. 8MiB 후반 64GB/s 이상 경계는 152/176/202개.
+- 프리페치 없음: 권장 2,560개/포트·4포트 10,240개.
+  AR 이후 공통 판단 회로를 남겨도 300ns까지 32MiB 후반 64GB/s 이상 확인.
+- 테스트 50개 통과, 추가 판단 지연 실험 26조건 완료.
+- 실행: python3 experiments/run_prefetch_decision.py
+- 초기 지연·ready 적중률·판단 투입 병렬성에 따라 달라지는 모델 수치.
+  이번에는 판단 회로 에너지나 기존 PDF/GUI를 갱신하지 않았음.

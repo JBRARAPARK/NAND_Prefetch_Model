@@ -17,6 +17,19 @@ python3 experiments/summarize_multiport_256.py
 python3 multiport_sim.py --config results/multiport_256/config_slow_ready.json --out scratch/multiport_ready
 ```
 
+## 64GB/s 유지: 프리페치 판단 지연 100·200·300ns
+
+[판단 지연·outstanding 결과](results/prefetch_decision_64/RESULTS_KO.md) · [전체 CSV](results/prefetch_decision_64/sweep.csv)
+
+`MultiportConfig.prefetch_decision_us`는 예측 시점부터 speculative NAND 요청을 만들기까지의 판단 지연이다. Host AR 이전에 수행하므로 프리페치 선행 시간을 줄인다. `host_decision_us`는 AR 이후 조회 큐에 들어가기 전의 별도 판단 지연이며 outstanding을 점유한다. 같은 판단을 두 위치에 중복 설정하지 않는다. 두 값의 기본값 0은 기존 실행을 보존한다.
+
+4포트 합계 64GB/s, 조회 500MHz·500ns 조건에서 예측 선행 시간을 10us 확보하면 판단 100·200·300ns 모두 outstanding 128개/포트로 후반 처리량 64GB/s를 유지한다. 판단이 AR 이후 조회 500ns에 추가되는 구조의 권장값은 각각 160·192·224개/포트다. 판단 단계는 고정 지연의 완전 파이프라인으로 가정하며 별도 판단 자원 제한과 에너지는 보정하지 않았다. 기존 PDF의 256GB/s 기본 구성과 구분되는 추가 실험이다.
+
+```sh
+python3 -m unittest -q
+python3 experiments/run_prefetch_decision.py
+```
+
 ## 조회 클럭·투입 간격·상대 파워 추가 비교
 
 [클럭·에너지 임원 보고 1쪽 PDF](docs/executive_clock_power/NAND_Lookup_Clock_Power_Executive_Brief_KO.pdf) · [편집용 Word](docs/executive_clock_power/NAND_Lookup_Clock_Power_Executive_Brief_KO.docx)

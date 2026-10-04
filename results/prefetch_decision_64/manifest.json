@@ -1,0 +1,19 @@
+{
+  "target_aggregate_gbps": 64,
+  "host_ports": 4,
+  "burst_bytes": 64,
+  "lookup_clock_mhz": 500,
+  "lookup_us": 0.5,
+  "lookup_slots_per_port": 500,
+  "lookup_pipelines_per_port": 2,
+  "cases": 26,
+  "tests": 50,
+  "runtime_seconds": 150.28356400799748,
+  "source_sha256": {
+    "axi_burst_sim.py": "2bd12fbac1e13752c1f7102df7a3c46bc660e28669cc63530c89242bee6bab8c",
+    "multiport_sim.py": "64d073f1e744744e4b4c8ae3cfc0da5a2969c3f170045e77f9b2b151ec735513",
+    "test_prefetch_decision.py": "961349b402df8f9dddf99cfce60f7bb7ca393bb9977123e61bbe22773102ec8a",
+    "experiments/run_prefetch_decision.py": "e5c83d19b82eb898286eca4eadc81ec3dcb187ab82ad930e3f71f4dfd29bdac5"
+  },
+  "semantics": "Decision delays are independent, fixed and fully pipelined. Ahead delay postpones speculative page issue; demand misses may issue first. Host delay holds AXI outstanding before lookup, but not lookup slots. They represent alternative placements; do not count the same decision twice. Host delay also applies with prefetch disabled when explicitly configured. Stream cases offer 64GB/s; their measured throughput is not saturated capacity. Tail is the aggregate common window after half the bursts complete. No decision unit bandwidth, resource cap, prediction accuracy or power is calibrated."
+}
