@@ -1,0 +1,19 @@
+{
+  "tests_passed": 56,
+  "counter_and_cancellation_equivalence_cases": 6,
+  "exact_scalar_replays": [
+    "host_1.024_502_online_False",
+    "extra_policy_0.9_10_128"
+  ],
+  "validated_csv_cases": 103,
+  "checks": [
+    "unique case/config coverage",
+    "finite numeric results",
+    "buffer capacity",
+    "per-port aggregate credit bound",
+    "shared descriptor bound",
+    "latency percentile ordering",
+    "NAND/R utilization bounds"
+  ],
+  "runtime_note": "Completed-row runtime sum includes counter revisions. Interrupted development runs are excluded; not a single fresh final-source batch timing."
+}

@@ -1,0 +1,36 @@
+{
+  "baseline_commit": "bf63379b7587b63e01925730f123f37a1ec33bdf",
+  "cases": 103,
+  "runtime_s": 413.749149459004,
+  "source_sha256": {
+    "deep_prefetch_sim.py": "20fd1f408419c3a1776d52e2eda0c8ee70ab56e038f7dd052bee08c380375f76",
+    "multiport_sim.py": "64d073f1e744744e4b4c8ae3cfc0da5a2969c3f170045e77f9b2b151ec735513",
+    "axi_burst_sim.py": "2bd12fbac1e13752c1f7102df7a3c46bc660e28669cc63530c89242bee6bab8c",
+    "test_deep_prefetch.py": "9c1fbbabeac548b40935bf1cfb7211505a037101c66b4d822737194791322522",
+    "experiments/run_deep.py": "238f1924aa300a8286f989f5d2a591680d9d6a791c041be0559079148baaf83f",
+    "experiments/run_deep_extra.py": "c319725ee142b9b354438a8b4f3c96e8b65b0113c99c84b47773bf6091f98907",
+    "experiments/run_buffer_boundary.py": "82aff1bcced1ca36fbe606033b9bd8ec4ddbcd120a582dc5b1be1c28475eb061",
+    "experiments/replay_deep_case.py": "1e45f456d4f11e381c1800192619b408515fc52ac57c6f54c2c992ac13745b0d",
+    "experiments/summarize_deep.py": "e208ce193505334f9419c369f4a7502500762f07263e22410fdc24a277d44cfe",
+    "results/deep_prefetch/provenance/deep_before_optimization.py": "c25a6fd25337083f5bb94224a6b35caad2cc8c2d0e7faa8ff576dd63f5297a79"
+  },
+  "validation": {
+    "tests_passed": 56,
+    "counter_and_cancellation_equivalence_cases": 6,
+    "exact_scalar_replays": [
+      "host_1.024_502_online_False",
+      "extra_policy_0.9_10_128"
+    ],
+    "validated_csv_cases": 103,
+    "checks": [
+      "unique case/config coverage",
+      "finite numeric results",
+      "buffer capacity",
+      "per-port aggregate credit bound",
+      "shared descriptor bound",
+      "latency percentile ordering",
+      "NAND/R utilization bounds"
+    ],
+    "runtime_note": "Completed-row runtime sum includes counter revisions. Interrupted development runs are excluded; not a single fresh final-source batch timing."
+  }
+}

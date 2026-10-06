@@ -1,0 +1,63 @@
+{
+  "review_date": "2026-10-06",
+  "status": "synthetic_sensitivity_checkpoint; causal_predictor_and_equal_hardware_cost_validation_pending",
+  "measurement_manifest": "manifest.json",
+  "archived_measurement_sources": {
+    "deep_prefetch_sim.py": "results/deep_prefetch/provenance/measurement_sources/deep_prefetch_sim.py",
+    "experiments/run_deep.py": "results/deep_prefetch/provenance/measurement_sources/experiments/run_deep.py",
+    "experiments/summarize_deep.py": "results/deep_prefetch/provenance/measurement_sources/experiments/summarize_deep.py"
+  },
+  "preserved_data_sha256": {
+    "sweep.csv": "6c9ef99e79a74708ff47967781a2e2a64635fd288de002267ae7d75ba5077b39",
+    "configs.json": "2e0ebc2d73a8a737b5c6a3bc249babc2d1b8c6ebbe996b1c10d299e12cb1680e",
+    "manifest.json": "6b2087b1bfacd20f4f0af8e2544b370333068f2ff49972369f3280dd68efa8f2"
+  },
+  "review_source_and_report_sha256": {
+    "README.md": "939e8fc3f7ad74718cd387dc086d1ae411dca91a9e2a09ef25aca40811527e46",
+    "deep_prefetch_sim.py": "b031b9f1818770caaf85319e7056896a7b4b46302c84291b708dbd1d3f266965",
+    "test_deep_prefetch.py": "9c1fbbabeac548b40935bf1cfb7211505a037101c66b4d822737194791322522",
+    "docs/deep_prefetch_review/STATUS_KO.md": "5c4813fee8dcfe6626108fe56c556dfcbf53bf6163c0d57fa951be217dbb3c5c",
+    "experiments/run_deep.py": "01bdd57b3187e438af8cb1c24f6da2d6d3add7fb17ef1ebf0f5c017bc83dc828",
+    "experiments/run_deep_extra.py": "c319725ee142b9b354438a8b4f3c96e8b65b0113c99c84b47773bf6091f98907",
+    "experiments/run_buffer_boundary.py": "82aff1bcced1ca36fbe606033b9bd8ec4ddbcd120a582dc5b1be1c28475eb061",
+    "experiments/replay_deep_case.py": "1e45f456d4f11e381c1800192619b408515fc52ac57c6f54c2c992ac13745b0d",
+    "experiments/summarize_deep.py": "c808caacc4a2e3eac9a7575653d656479c9f4f22485b2a2492a2d5148fd0e7f5",
+    "results/deep_prefetch/README.txt": "c8db5320eadd6691c73e8130822e9fb5c6a59164aca423af1caa52d0f36936cd",
+    "results/deep_prefetch/REPORT_KO.html": "bd7300f71d7c8cc493aa8bb8c2f816fe4c10899ead23b5b734585bfa7cb86b10",
+    "results/deep_prefetch/buffer_boundary.png": "7ad3e76c53ebe27fee5da9f0c0697992f6d52202e6fdb30fb89ab23420b163ee",
+    "results/deep_prefetch/equal_budget.png": "e271aefb8d000c8f84f6a7d42f1010506f2d2d5a467e86571021667cabd00d96",
+    "results/deep_prefetch/gain.png": "7a02645ffe847a1a32ea20b7f7dda87f2d8d4883c8c03ecbc1d120e87f4a75db",
+    "results/deep_prefetch/performance_buffer.png": "c40f86070b88ffdc740a0d4e17ef03badb41bb274170b7b4f730f664826b5682"
+  },
+  "changes": "Scope explanations, plot labels, and experiment-count comment only; measurement data retained. No fresh 103-case sweep during this review.",
+  "validation": {
+    "command": "python3 -B -m unittest -q",
+    "tests_passed": 56,
+    "existing_tests": 50,
+    "added_tests": 6,
+    "numerical_ast_unchanged": [
+      "deep_prefetch_sim.py",
+      "experiments/run_deep.py"
+    ],
+    "preserved_original_measurement_source_hashes_verified": 10,
+    "csv_config_cases": 103,
+    "checks": [
+      "CSV/config/measurement manifest byte-identical to pre-review copies",
+      "unique case/config coverage",
+      "finite numeric results",
+      "buffer capacity",
+      "per-port aggregate credit bound",
+      "abstract mixed-token bound",
+      "latency percentile ordering",
+      "NAND/R utilization bounds"
+    ],
+    "plot_generation_command": "MPLCONFIGDIR=/private/tmp/nand-mpl .venv/bin/python experiments/summarize_deep.py"
+  },
+  "known_limitations": [
+    "Future-informed online candidates",
+    "Oracle wrong-page discard",
+    "Mixed 64B AR / 16KiB page token budget",
+    "Post-demand drain excluded from throughput denominators",
+    "Causal prediction and reusable page lifecycle not implemented"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "measured_legacy_seconds": 1.0231856667501233,
+  "new_cases": 78,
+  "request_equivalent_cases_128": 67,
+  "estimated_seconds": 68.55343967225826,
+  "method": "linear requests scaling from four 128-request legacy runs; online queue overhead can increase runtime"
+}

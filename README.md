@@ -226,3 +226,22 @@ Eight tests cover analytic shared/independent transfer, serial sensing,
 in-order return at QD4, finite-buffer credit limits, delayed address availability,
 wrong-speculation traffic, lookup delay and prefetched readiness.
 Tests validate the model equations and invariants, not real NAND behavior.
+
+
+## 심화 모델링 중간 결과와 설계 검토
+
+[검토 현황과 미완료 항목](docs/deep_prefetch_review/STATUS_KO.md) · [한국어 결과 보고서](results/deep_prefetch/REPORT_KO.html) · [103조건 CSV](results/deep_prefetch/sweep.csv) · [재현 안내](results/deep_prefetch/README.txt)
+
+기준 커밋 bf63379의 기존 결과 재현과 **합성 prefetch 민감도 분석**까지 완료했다. 코드·CSV의 `online`은 미래 요청과 도착 시각을 알고 host 실행 중에 발행하는 합성 모델이다. 실제 과거 관측만 사용하는 인과적 예측기는 아직 구현·검증하지 않았다. 잘못된 예측을 ready 시 즉시 폐기하는 oracle 가정도 남아 있다.
+
+동일 host credit 비교와 `same_total` 비교를 분리했지만, 후자는 64B AR credit과 16KiB speculative page descriptor를 각각 1개로 더한 **혼합 토큰 예산**이다. 동일 unique-page 수나 동일 하드웨어 비용 비교로 해석할 수 없다. 56개 테스트(기존 50개 + 추가 6개) 통과는 현재 모델의 검증이며 상세 설계 요구 전체의 검증 완료를 뜻하지 않는다.
+
+측정한 512 host request demand-only 실행에서 O=8,000은 후반 210.77GB/s, O=10,000은 256GB/s였다. O=10,000·2.5MiB 버퍼에서 중간·후반 256GB/s를 관측했다. 이는 유한 실행의 모델 결과이며 정밀 포화 경계나 실제 SRAM·에너지 비용의 측정은 아니다. 64GB/s 입력 제한과 최대 공급 실험, 준비 시간과 종료 효과는 보고서에서 구분한다.
+
+```sh
+python3 -m unittest -q
+python3 experiments/run_deep.py
+python3 experiments/run_deep_extra.py
+python3 experiments/run_buffer_boundary.py
+MPLCONFIGDIR=/tmp/nand-mpl .venv/bin/python experiments/summarize_deep.py
+```
