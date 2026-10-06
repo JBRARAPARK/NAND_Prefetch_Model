@@ -55,3 +55,9 @@ Outstanding은 **포트당 64B AXI burst의 AR 수락부터 RLAST까지 점유�
 [실행 안내](../../results/deep_prefetch/README.txt), [결과 CSV](../../results/deep_prefetch/sweep.csv), [구성](../../results/deep_prefetch/configs.json), [보고서](../../results/deep_prefetch/REPORT_KO.html)를 함께 확인한다.
 
 검토 정정은 모델의 수치 연산을 바꾸지 않고 설명·표시를 수정한다. 측정 당시 `manifest.json`과 CSV/configs는 보존하고, 이번 정정으로 해시가 달라진 소스의 원본은 `results/deep_prefetch/provenance/measurement_sources/`에 둔다. `review_manifest.json`은 이번 검증과 변경 후 소스 해시를 별도로 기록한다. 기존 103조건 전체를 새로 실행한 것으로 표시하지 않는다.
+
+## Blind spot 상세 고찰 자료
+
+[21쪽 PDF](NAND_Prefetch_Blind_Spot_상세검토.pdf)와 [편집 가능한 Word](NAND_Prefetch_Blind_Spot_상세검토.docx)에 13개 blind spot을 상세히 정리했다. 주소 공개 시점과 인과성, 자원 예산의 동등성, page 수명주기, 예측 품질과 대역폭·버퍼 비용, AXI 순서 및 관측 창을 다루며, 지표 정의·단계별 실험안·반례 테스트·후속 구현 순서를 포함한다.
+
+검토 대상 코드는 `4d3bb3f0eba163f0b44dd193b1db5b65958bf739`로 고정했다. 기존 103조건 측정, 이론 계산, 아직 실행하지 않은 제안을 구분하며 이 문서 추가로 새 측정 결과가 생긴 것은 아니다. 우선 3~6장과 19장의 설계 결정 사항을 검토한다.

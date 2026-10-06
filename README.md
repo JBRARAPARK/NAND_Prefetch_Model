@@ -230,6 +230,10 @@ Tests validate the model equations and invariants, not real NAND behavior.
 
 ## 심화 모델링 중간 결과와 설계 검토
 
+[Blind spot 상세 검토 PDF](docs/deep_prefetch_review/NAND_Prefetch_Blind_Spot_상세검토.pdf) · [편집 가능한 Word](docs/deep_prefetch_review/NAND_Prefetch_Blind_Spot_상세검토.docx)
+
+21쪽 상세 자료는 13개 blind spot, 지표 정의, 반례 테스트와 후속 구현 순서를 정리한다. 코드 검토 기준은 `4d3bb3f0eba163f0b44dd193b1db5b65958bf739`이며, 기존 측정·이론 추정·미실행 실험 제안을 구분한다. 이 문서 추가 과정에서 새 시뮬레이션은 실행하지 않았다.
+
 [검토 현황과 미완료 항목](docs/deep_prefetch_review/STATUS_KO.md) · [한국어 결과 보고서](results/deep_prefetch/REPORT_KO.html) · [103조건 CSV](results/deep_prefetch/sweep.csv) · [재현 안내](results/deep_prefetch/README.txt)
 
 기준 커밋 bf63379의 기존 결과 재현과 **합성 prefetch 민감도 분석**까지 완료했다. 코드·CSV의 `online`은 미래 요청과 도착 시각을 알고 host 실행 중에 발행하는 합성 모델이다. 실제 과거 관측만 사용하는 인과적 예측기는 아직 구현·검증하지 않았다. 잘못된 예측을 ready 시 즉시 폐기하는 oracle 가정도 남아 있다.
